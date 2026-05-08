@@ -26,10 +26,10 @@ const startServer = async () => {
   await require('./config/passport')(app);
   app.use(routes);
 
-  app.listen(port, () => {
+  app.listen(port, '127.0.0.1', () => {
     console.log(
       `${chalk.green('✓')} ${chalk.blue(
-        `Listening on port ${port}. Visit http://localhost:${port}/ in your browser.`
+        `Listening on port ${port}. Visit http://127.0.0.1:${port}/ in your browser.`
       )}`
     );
   });
