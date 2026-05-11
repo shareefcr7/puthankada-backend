@@ -10,6 +10,23 @@ const BannerSchema = new Schema({
     type: String,
     required: true,
   },
+  tag: {
+    type: String,
+    default: "",
+  },
+  headline: {
+    type: String,
+    default: "",
+  },
+  subheadline: {
+    type: String,
+    default: "",
+  },
+  align: {
+    type: String,
+    enum: ["left", "center", "right"],
+    default: "left",
+  },
   isActive: {
     type: Boolean,
     default: true,
