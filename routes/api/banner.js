@@ -28,7 +28,7 @@ router.post('/bulk', auth, async (req, res) => {
     const processedBanners = [];
 
     for (const b of banners) {
-      if (!b.desktopImage || !b.mobileImage) continue;
+      if (!b.desktopImage) continue;
 
       let finalDesktop = b.desktopImage;
       if (b.desktopImage.startsWith('data:image')) {
@@ -36,16 +36,20 @@ router.post('/bulk', auth, async (req, res) => {
         finalDesktop = dUpload.secure_url;
       }
 
-      let finalMobile = b.mobileImage;
-      if (b.mobileImage.startsWith('data:image')) {
-        const mUpload = await cloudinary.uploader.upload(b.mobileImage, { folder: 'banners/mobile' });
+      let finalMobile = b.mobileImage || finalDesktop;
+      if (finalMobile && finalMobile.startsWith('data:image')) {
+        const mUpload = await cloudinary.uploader.upload(finalMobile, { folder: 'banners/mobile' });
         finalMobile = mUpload.secure_url;
       }
 
       processedBanners.push({
         desktopImage: finalDesktop,
         mobileImage: finalMobile,
-        isActive: b.isActive !== undefined ? b.isActive : true
+        isActive: b.isActive !== undefined ? b.isActive : true,
+        tag: b.tag || "",
+        headline: b.headline || "",
+        subheadline: b.subheadline || "",
+        align: b.align || "left"
       });
     }
 

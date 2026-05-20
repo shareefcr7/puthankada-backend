@@ -19,7 +19,35 @@ app.use(
     frameguard: true
   })
 );
-app.use(cors());
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '50mb' }));
+
+app.use(
+  cors({
+    origin: [
+      'https://admin.gracefoods.co.in',
+      'https://gracefoods.co.in',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'http://127.0.0.1:3002'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  })
+);
+
+app.options('*', cors());
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    frameguard: true
+  })
+);
 
 const startServer = async () => {
   await setupDB();
@@ -57,8 +85,8 @@ const startServer = async () => {
         });
         break;
       } catch (err) {
-        if (err && err.code === 'EADDRINUSE') {
-          console.error(`${chalk.red('✗')} Port ${portToTry} is already in use.`);
+        if (err && (err.code === 'EADDRINUSE' || err.code === 'EPERM')) {
+          console.error(`${chalk.red('✗')} Port ${portToTry} is unavailable (code: ${err.code}).`);
           attempt += 1;
           portToTry += 1; // try next port
           if (attempt > maxRetries) {
