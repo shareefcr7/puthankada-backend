@@ -57,7 +57,7 @@ const startServer = async () => {
   // Try to start the server and fall back to incrementing ports when no explicit port is provided.
   const desiredPort = parseInt(process.env.PORT, 10) || parseInt(port, 10) || 5000;
   const maxRetries = 5;
-  const allowFallback = !process.env.PORT;
+  const allowFallback = process.env.NODE_ENV !== 'production';
 
   const startListening = (portToUse) =>
     new Promise((resolve, reject) => {
