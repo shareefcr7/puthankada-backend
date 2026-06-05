@@ -54,16 +54,18 @@ const startServer = async () => {
   await require('./config/passport')(app);
   app.use(routes);
 
-  // Try to start the server and fall back to incrementing ports if the configured port is taken.
-  // const host = '0.0.0.0';
-  const desiredPort = parseInt(port, 10) || 5000;
+  // Try to start the server and fall back to incrementing ports when no explicit port is provided.
+  const desiredPort = parseInt(process.env.PORT, 10) || parseInt(port, 10) || 5000;
   const maxRetries = 5;
+  const allowFallback = !process.env.PORT;
 
   const startListening = (portToUse) =>
     new Promise((resolve, reject) => {
-      const srv = app.listen(portToUse, '127.0.0.1', () => {
+      const host = process.env.HOST || '0.0.0.0';
+      const srv = app.listen(portToUse, host, () => {
+        const visitUrl = `http://localhost:${portToUse}/`;
         console.log(
-          `${chalk.green('✓')} ${chalk.blue(`Listening on port ${portToUse}. Visit http://127.0.0.1:${portToUse}/ in your browser.`)}`
+          `${chalk.green('✓')} ${chalk.blue(`Listening on ${host}:${portToUse}. Visit ${visitUrl} in your browser.`)}`
         );
         resolve(srv);
       });
@@ -87,6 +89,10 @@ const startServer = async () => {
       } catch (err) {
         if (err && (err.code === 'EADDRINUSE' || err.code === 'EPERM')) {
           console.error(`${chalk.red('✗')} Port ${portToTry} is unavailable (code: ${err.code}).`);
+          if (!allowFallback) {
+            console.error(`${chalk.red('✗')} Port is required by the environment and cannot fallback. Exiting.`);
+            process.exit(1);
+          }
           attempt += 1;
           portToTry += 1; // try next port
           if (attempt > maxRetries) {
