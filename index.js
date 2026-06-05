@@ -1,42 +1,57 @@
 require('dotenv').config();
 const express = require('express');
 const chalk = require('chalk');
+const cors = require('cors');
 const helmet = require('helmet');
 
 const keys = require('./config/keys');
 const routes = require('./routes');
 const setupDB = require('./utils/db');
-const { corsMiddleware, preflightHandler, corsErrorHandler } = require('./middleware/cors');
 
 const { port } = keys;
 const app = express();
 
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
-
-// Security headers with CORS-friendly settings
 app.use(
   helmet({
     contentSecurityPolicy: false,
-    frameguard: true,
-    crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    frameguard: true
+  })
+);
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '50mb' }));
+
+app.use(
+  cors({
+    origin: [
+      'https://admin.gracefoods.co.in',
+      'https://gracefoods.co.in',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'http://127.0.0.1:3002'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
   })
 );
 
-// Use modular CORS middleware
-app.use(corsMiddleware);
+app.options('*', cors());
 
-// Enhanced preflight OPTIONS handler
-app.options('*', preflightHandler);
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    frameguard: true
+  })
+);
 
 const startServer = async () => {
   await setupDB();
   await require('./config/passport')(app);
-  
-  // Add CORS error handling middleware before routes
-  app.use(corsErrorHandler);
-  
   app.use(routes);
 
   // Try to start the server and fall back to incrementing ports when no explicit port is provided.
