@@ -25,15 +25,15 @@ app.use(express.json({ limit: '50mb' }));
 app.use(
   cors({
     origin: [
-      'https://admin.gracefoods.co.in',
-      'https://gracefoods.co.in',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:3002'
-    ],
+  'https://puthankada-frontend.vercel.app',
+  'https://puthankada-admin.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+  'http://127.0.0.1:3002'
+],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
