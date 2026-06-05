@@ -56,28 +56,28 @@ const seedAdmin = async () => {
     });
     console.log('Connected to MongoDB.');
 
-    const adminEmail = 'admin@store.com';
+    const adminEmail = 'admin@puthankada.com';
     const existingAdmin = await User.findOne({ email: adminEmail });
 
     if (existingAdmin) {
       console.log('Admin already exists — resetting password and ensuring Admin role...');
       // Use updateOne to bypass the pre-save hook so password isn't double-hashed
       const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash('password123', salt);
+      const hash = await bcrypt.hash('puthankada123', salt);
       await User.updateOne(
         { email: adminEmail },
         { $set: { role: ROLES.Admin, password: hash } }
       );
       console.log('Admin password reset successfully.');
-      console.log('Email: admin@store.com');
-      console.log('Password: password123');
+      console.log('Email: admin@puthankada.com');
+      console.log('Password: puthankada123');
       process.exit(0);
     }
 
     const adminUser = new User({
       email: adminEmail,
-      password: 'password123',
-      firstName: 'Super',
+      password: 'puthankada123',
+      firstName: 'Puthankada',
       lastName: 'Admin',
       role: ROLES.Admin
     });
@@ -85,8 +85,8 @@ const seedAdmin = async () => {
     await adminUser.save();
 
     console.log('Admin created successfully.');
-    console.log('Email: admin@store.com');
-    console.log('Password: password123');
+    console.log('Email: admin@puthankada.com');
+    console.log('Password: puthankada123');
     process.exit(0);
   } catch (err) {
     console.error(err);
