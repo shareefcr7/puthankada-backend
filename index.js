@@ -19,8 +19,7 @@ app.use(
     frameguard: true
   })
 );
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.json({ limit: '50mb' }));
+
 
 // Dynamically build CORS whitelist from environment variable if present
 const defaultOrigins = [
@@ -56,17 +55,13 @@ app.use(
 );
 app.options('*', cors());
 
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    frameguard: true
-  })
-);
+
 // Serve static assets (e.g., banner images)
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 // Simple health check used by Vercel admin and monitoring tools
 app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 const startServer = async () => {
   await setupDB();
   await require('./config/passport')(app);
