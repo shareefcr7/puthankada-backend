@@ -23,19 +23,29 @@ app.use(
 
 // Dynamically build CORS whitelist from environment variable if present
 const defaultOrigins = [
-  'https://puthankada-frontend.vercel.app',
-  'https://puthankada-admin.vercel.app',
-  // Custom Domains
-  'https://puthankadaonline.in',
-  'https://www.puthankadaonline.in',
-  'https://admin.puthankadaonline.in',
-  // Local Development
+  // Production domains
+  'https://puthan-kada.vercel.app',
+  'https://admin.puthan-kada.vercel.app',
+  'https://puthankada.co.in',
+  'https://admin.puthankada.co.in',
+  'https://www.puthankada.co.in',
+  'https://www.admin.puthankada.co.in',
+  // Development domains (range ports 3000‑3003, 4000, 5000, 8000, 8080)
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
+  'http://localhost:3003',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:3001',
-  'http://127.0.0.1:3002'
+  'http://127.0.0.1:3002',
+  'http://127.0.0.1:3003',
+  'http://localhost:4000',
+  'http://localhost:5000',
+  'http://localhost:8000',
+  'http://localhost:8080',
+  // Legacy domains (backward compatibility)
+  'https://admin.gracefoods.co.in',
+  'https://gracefoods.co.in',
 ];
 
 // ALLOWED_ORIGINS can be a comma‑separated list in .env – we merge it with defaults
@@ -48,11 +58,34 @@ const whitelist = Array.from(new Set([...defaultOrigins, ...envOrigins]));
 app.use(
   cors({
     origin: whitelist,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'Cache-Control',
+      'Pragma',
+      'X-HTTP-Method-Override',
+      'X-Forwarded-For',
+      'X-Real-IP'
+    ],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    maxAge: 86400 // 24 hours caching of preflight response
   })
 );
+
+// Log CORS violations for monitoring
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && !whitelist.includes(origin)) {
+    console.warn(`CORS violation: Origin ${origin} not in whitelist`);
+  }
+  next();
+});
 app.options('*', cors());
 
 
