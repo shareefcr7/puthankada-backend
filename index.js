@@ -23,28 +23,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 
 app.use(
-  cors({
-    origin: [
-      'https://puthankada-frontend.vercel.app',
-      'https://puthankada-admin.vercel.app',
-
-      // Custom Domains
-      'https://puthankadaonline.in',
-      'https://www.puthankadaonline.in',
-      'https://admin.puthankadaonline.in',
-
-      // Local Development
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:3002'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  })
+  cors({ origin: true, credentials: true })
 );
 app.options('*', cors());
 
