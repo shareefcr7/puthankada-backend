@@ -22,25 +22,33 @@ app.use(
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 
+// Dynamically build CORS whitelist from environment variable if present
+const defaultOrigins = [
+  'https://puthankada-frontend.vercel.app',
+  'https://puthankada-admin.vercel.app',
+  // Custom Domains
+  'https://puthankadaonline.in',
+  'https://www.puthankadaonline.in',
+  'https://admin.puthankadaonline.in',
+  // Local Development
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+  'http://127.0.0.1:3002'
+];
+
+// ALLOWED_ORIGINS can be a comma‑separated list in .env – we merge it with defaults
+let envOrigins = [];
+if (process.env.ALLOWED_ORIGINS) {
+  envOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean);
+}
+const whitelist = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+
 app.use(
   cors({
-    origin: [
-      'https://puthankada-frontend.vercel.app',
-      'https://puthankada-admin.vercel.app',
-
-      // Custom Domains
-      'https://puthankadaonline.in',
-      'https://www.puthankadaonline.in',
-      'https://admin.puthankadaonline.in',
-
-      // Local Development
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:3002'
-    ],
+    origin: whitelist,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -56,6 +64,9 @@ app.use(
 );
 // Serve static assets (e.g., banner images)
 app.use('/static', express.static(path.join(__dirname, 'public')));
+
+// Simple health check used by Vercel admin and monitoring tools
+app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 const startServer = async () => {
   await setupDB();
   await require('./config/passport')(app);
