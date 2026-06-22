@@ -3,7 +3,7 @@ const express = require('express');
 const chalk = require('chalk');
 const cors = require('cors');
 const helmet = require('helmet');
-
+const path = require('path');
 const keys = require('./config/keys');
 const routes = require('./routes');
 const setupDB = require('./utils/db');
@@ -54,7 +54,8 @@ app.use(
     frameguard: true
   })
 );
-
+// Serve static assets (e.g., banner images)
+app.use('/static', express.static(path.join(__dirname, 'public')));
 const startServer = async () => {
   await setupDB();
   await require('./config/passport')(app);
