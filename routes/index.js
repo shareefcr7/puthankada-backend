@@ -1,11 +1,17 @@
 const router = require('express').Router();
 
-const apiRoutes = require('./api');
+router.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Puthan-Kada API Running'
+    });
+});
 
-// Root route to show API is running (prevents "Cannot GET /" in browser)
-router.get('/', (req, res) => res.send('Puthan-Kada backend is running. Visit /api for endpoints'));
-router.get('/api', (req, res) => res.json({ status: 'ok', message: 'Backend reachable' }));
-
-router.use('/api', apiRoutes);
+router.use('/auth', require('./api/auth'));
+router.use('/banner', require('./api/banner'));
+router.use('/category', require('./api/category'));
+router.use('/product', require('./api/product'));
+router.use('/subcategory', require('./api/subcategory'));
+router.use('/user', require('./api/user'));
 
 module.exports = router;
