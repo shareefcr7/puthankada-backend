@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+console.log('✅ category.js loaded');
 const passport = require('passport');
 
 // Bring in Models & Utils

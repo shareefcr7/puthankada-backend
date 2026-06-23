@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+console.log("🔥 API INDEX LOADED");
 const authRoutes = require('./auth');
 const productRoutes = require('./product');
 const categoryRoutes = require('./category');

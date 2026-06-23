@@ -32,7 +32,13 @@ app.get('/', (req, res) => {
 
 //console.log(require('./routes'));
 // API Routes
-//app.use('/api', require('./routes'));
+app.use('/api', require('./routes'));
+app.get("/api", (req, res) => {
+  res.json({ ok: true, message: "Puthankada API is running" });
+});
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, message: "Puthankada backend healthy" });
+});
 
 // -----------------------------------------------------------
 // Error Handling
