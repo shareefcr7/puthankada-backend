@@ -1,4 +1,9 @@
+
 const router = require('express').Router();
+
+require('dotenv').config();
+
+console.log("🚀 NEW BUILD 4c27374 LOADED");
 
 router.get('/', (req, res) => {
     res.json({
