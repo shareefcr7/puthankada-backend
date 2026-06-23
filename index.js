@@ -2,6 +2,10 @@ require('dotenv').config();
 
 const express = require('express');
 
+const setupDB = require('./utils/db');
+
+setupDB();
+
 // Import CORS utilities
 const {
   corsMiddleware,
